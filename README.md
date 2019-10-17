@@ -6,7 +6,7 @@ A demo for get linux resource information and transfer the data to another linux
 
 ### 1. Get linux resource infomation
 
-The infomation of the linux is gotten by linux command.<br>
+The infomation of the linux is gotten by linux command.<br><br>
 The infomation includes **`cpu`**, **`disk`**, **`memory`** and **`network`**.<br>
 The code is stored in **`linuxCommand.h`**.<br>
 
