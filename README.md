@@ -29,3 +29,23 @@ A demo for get linux resource information and transfer the data to another linux
 - As the data is too long, we use the **`http post`**.(the length of the data is **`unlimited`**)<br>
 - The code is stored in **`HttpRequest.h`**.<br>
 
+## Server
+
+### Start a servlet and handler to get the information
+
+- Build a servlet for http post catch.<br>
+- In this project , we use **`jetty`** + **`servlet`** to build a server for the http post. You can download it from [jetty](https://www.eclipse.org/jetty/download.html). In my project, I download it from [maven](https://mvnrepository.com/search?q=jetty). <br>
+- After the build of above, I set a handler to catch the http post request. In my handler, it includes **`doPost`** and **`doGet`** method.<br>
+- The code is stored in **`SearchServlet.java`**.<br>
+
+### Get the json data from the http post
+
+- Build **`getBodyData`** method to get the json data.<br>
+- In this project, we use **`gson`** to transfer the data from String to jsonArray. This is a google tool, you can download it from [gson](https://mvnrepository.com/search?q=gson).
+- The code is stored in **`SearchServlet.java`**.<br>
+
+### Store the data into mysql database
+
+- Store the json data into the mysql database.<br>
+- In this project, we use **`sql`** to connect the mysql database by java language.<br>
+- The code is stored in **`JsonDataToMysql.java`**.<br>
