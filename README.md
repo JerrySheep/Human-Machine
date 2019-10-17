@@ -1,9 +1,6 @@
 # Human-Machine
 
-A demo for get linux resource and transfer the data to another linux server with http post.<br>
-The data is stored in `json` scheme.<br>
-The client is written by using `C++` language.<br>
-The server is written by using `Java` language.<br>
+A demo for get linux resource information and transfer the data to another linux server.<br>
 
 ## Client
 
