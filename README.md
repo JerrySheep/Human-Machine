@@ -10,7 +10,7 @@ The server is written by using `Java` language.<br>
 ### 1. Get linux resource infomation
 
 The infomation of the linux is gotten by linux command.<br>
-The infomation includes `**cpu**`, `**disk**`, `**memory**` and `**network**`.<br>
+The infomation includes **`cpu`**, `**disk**`, `**memory**` and `**network**`.<br>
 The code is stored in `**linuxCommand.h**`.
 
 ### 2. Store the infomation in a json file
