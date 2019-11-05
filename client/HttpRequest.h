@@ -66,13 +66,13 @@ int HttpRequest::HttpPost(const char* strUrl, const char* strData, char* strResp
 int HttpRequest::HttpRequestExec(const char* strMethod, const char* strUrl, const char* strData, char* strResponse) {
     //judge the url
     if((strUrl == NULL) || (0 == strcmp(strUrl, ""))) {
-        DebugOut("%s %s %d\tURL为空\n", __FILE__, __FUNCTION__, __LINE__);
+        DebugOut("%s %s %d\turl is empty\n", __FILE__, __FUNCTION__, __LINE__);
         return 0;
     }
 
     //url length limitation
     if(URLSIZE < strlen(strUrl)) {
-        DebugOut("%s %s %d\tURL的长度不能超过%d\n", __FILE__, __FUNCTION__, __LINE__, URLSIZE);
+        DebugOut("%s %s %d\turl length can not over %d\n", __FILE__, __FUNCTION__, __LINE__, URLSIZE);
         return 0;
     }
 
@@ -80,7 +80,7 @@ int HttpRequest::HttpRequestExec(const char* strMethod, const char* strUrl, cons
     char* strHttpHead = HttpHeadCreate(strMethod, strUrl, strData);
 
     if(m_iSocketFd != INVALID_SOCKET) {
-        //检查SocketFd是否为可写不可读状态
+        //Check whether SocketFd could be written or not
         if(SocketFdCheck(m_iSocketFd) > 0) {
             char* strResult = HttpDataTransmit(strHttpHead, m_iSocketFd);
             if(NULL != strResult) {
@@ -197,8 +197,7 @@ char* HttpRequest::HttpHeadCreate(const char* strMethod, const char* strUrl, con
     strcat(strHttpHead, "\r\n");
     strcat(strHttpHead, "Cache-Control: no-cache\r\n");
     strcat(strHttpHead, "Connection: Keep-Alive\r\n");
-    if(0 == strcmp(strMethod, "POST"))
-    {
+    if(0 == strcmp(strMethod, "POST")) {
         char len[8] = {0};
         unsigned uLen = strlen(strData);
         sprintf(len, "%d", uLen);
@@ -435,7 +434,7 @@ int HttpRequest::SocketFdCheck(const int iSockFd) {
         }
         else
         {
-            DebugOut("%s %s %d\tsockFd written：%d，is writted：%d\t(0 is not exist)\n", __FILE__, __FUNCTION__, __LINE__, iW, iR);
+            DebugOut("%s %s %d\tsockFd written：%d，is written：%d\t(0 is not exist)\n", __FILE__, __FUNCTION__, __LINE__, iW, iR);
         }
     }
     else if(iRet == 0)

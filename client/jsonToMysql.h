@@ -31,6 +31,14 @@ void jsonToMysql(){
     vector<double> diskInfo;
     vector<double> ethUploadInfo;
     vector<double> ethDownloadInfo;
+    vector<string> dockerIDInfo;
+    vector<double> dockerCpuInfo;
+    vector<double> dockerMemoryUsageInfo;
+    vector<double> dockerMemoryLimitInfo;
+    vector<double> dockerMemoryInfo;
+//    vector<double> dockerNetworkInputInfo;
+//    vector<double> dockerNetworkOutputInfo;
+    vector<double> madAddressInfo;
 
     ifstream ifs;
     ifs.open("resource.json");
@@ -54,27 +62,41 @@ void jsonToMysql(){
         diskInfo.push_back(disk[0]["Available"].asDouble());
 
         Json::Value network = value["network info"];
-
         for(int i = 0; i < network.size(); ++i){
             ethUploadInfo.push_back(network[i]["upload rate"].asDouble());
             ethDownloadInfo.push_back(network[i]["download rate"].asDouble());
         }
+
+        Json::Value docker = value["docker info"];
+        for(int i = 0; i < dockerIDInfo.size(); ++i){
+            dockerIDInfo.push_back(docker[i]["id"].asString());
+            dockerCpuInfo.push_back(docker[i]["cpu"].asDouble());
+            dockerMemoryUsageInfo.push_back(docker[i]["memory usage"].asDouble());
+            dockerMemoryLimitInfo.push_back(docker[i]["memory limit"].asDouble());
+            dockerMemoryInfo.push_back(docker[i]["memory"].asDouble());
+//            dockerNetworkInputInfo.push_back(docker[i]["network input"].asDouble());
+//            dockerNetworkOutputInfo.push_back(docker[i]["network output"].asDouble());
+        }
+
+        Json::Value macAddress = value["mac address info"];
+        memoryInfo.push_back(macAddress[0]["id"].asDouble());
     }
 
-    outputInfo(cpuSourceAvailable);
+    /*outputInfo(cpuSourceAvailable);
     outputInfo(cpuMHz);
     outputInfo(cpuCores);
     outputInfo(memoryInfo);
     outputInfo(diskInfo);
     outputInfo(ethUploadInfo);
-    outputInfo(ethDownloadInfo);
+    outputInfo(ethDownloadInfo);*/
 
+    /*
     MYSQL conn;
     int res;
     mysql_init(&conn);
-    /*if(mysql_real_connect(&conn,"localhost","root","","linux_resource",0,"/home/yanhao/local/mysql-5.5.37/mysql.sock",0) == NULL){
-        fprintf(stderr, "error: %s",mysql_error(&conn));
-    }*/
+//    if(mysql_real_connect(&conn,"localhost","root","","linux_resource",0,"/home/yanhao/local/mysql-5.5.37/mysql.sock",0) == NULL){
+//        fprintf(stderr, "error: %s",mysql_error(&conn));
+//    }
     if(mysql_real_connect(&conn, "localhost", "root", "", "linux_resource", 0, "/home/yanhao/local/mysql-5.5.37/mysql.sock", 0)){
         cout << "connect success!" << endl;
         res = mysql_query(&conn, "delete from cpu");
@@ -91,7 +113,7 @@ void jsonToMysql(){
         char* s = new char[100];
         string temp = "";
         for(int i = 0; i < cpuMHz.size(); ++i){
-            temp = "insert into cpu (id, resource, MHz , cores) values('" + to_string(i) + "','" + to_string(cpuSourceAvailable[i]) + "','" + to_string(cpuMHz[i]) + "','" + to_string(cpuCores[i]) + "')";
+            temp = "insert into cpu values('" + to_string(i) + "','" + to_string(cpuSourceAvailable[i]) + "','" + to_string(cpuMHz[i]) + "','" + to_string(cpuCores[i]) + "')";
             strcpy(s, temp.c_str());
             res = mysql_query(&conn, s);
             if(res){
@@ -103,7 +125,7 @@ void jsonToMysql(){
 
         }
 
-        temp = "insert into memory (total, available , used) values('" + to_string(memoryInfo[0]) + "','" + to_string(memoryInfo[1]) + "','" + to_string(1 - memoryInfo[1] / memoryInfo[0]) + "')";
+        temp = "insert into memory values('" + to_string(memoryInfo[0]) + "','" + to_string(memoryInfo[1]) + "','" + to_string(1 - memoryInfo[1] / memoryInfo[0]) + "')";
         strcpy(s, temp.c_str());
         res = mysql_query(&conn, s);
         if(res){
@@ -113,7 +135,7 @@ void jsonToMysql(){
             cout << "memory insert OK" << endl;
         }
 
-        temp = "insert into disk (total, available , used) values('" + to_string(diskInfo[0]) + "','" + to_string(diskInfo[1]) + "','" + to_string(1 - diskInfo[1] / diskInfo[0]) + "')";
+        temp = "insert into disk values('" + to_string(diskInfo[0]) + "','" + to_string(diskInfo[1]) + "','" + to_string(1 - diskInfo[1] / diskInfo[0]) + "')";
         strcpy(s, temp.c_str());
         res = mysql_query(&conn, s);
         if(res){
@@ -124,7 +146,7 @@ void jsonToMysql(){
         }
 
         for(int i = 0; i < ethUploadInfo.size(); ++i){
-            temp = "insert into network (id, uploadRate , downloadRate) values('" + to_string(i) + "','" + to_string(ethUploadInfo[i]) + "','" + to_string(ethDownloadInfo[i]) + "')";
+            temp = "insert into network values('" + to_string(i) + "','" + to_string(ethUploadInfo[i]) + "','" + to_string(ethDownloadInfo[i]) + "')";
             strcpy(s, temp.c_str());
             res = mysql_query(&conn, s);
             if(res){
@@ -141,6 +163,7 @@ void jsonToMysql(){
     else{
         cout << "connect fail" << endl;
     }
+     */
 }
 
 #endif //CLIENT_JSONTOMYSQL_H

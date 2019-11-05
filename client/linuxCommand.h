@@ -12,6 +12,7 @@
 #include <vector>
 #include "json_include/json.h"
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -52,7 +53,10 @@ void string_to_double(string src, vector<double>& v) {
 void data_to_json(vector<double> cpuSourceAvailable, vector<double> cpuMHz, vector<double> cpuCores,
                   vector<double> memoryTotalInfo, vector<double> memoryAvailableInfo,
                   vector<double> diskTotalInfo, vector<double> diskAvailableInfo,
-                  vector<double> ethFirstInfo, vector<double> ethSecondInfo){
+                  vector<double> ethFirstInfo, vector<double> ethSecondInfo,
+                  vector<string> dockerIDInfo, vector<double> dockerCpuInfo,
+                  vector<double> dockerMemoryUsageInfo, vector<double> dockerMemoryLimitInfo,
+                  vector<double> dockerMemoryInfo, vector<double> macAddressId){
     Json::Value root;
 
     //cpu info to json
@@ -67,12 +71,26 @@ void data_to_json(vector<double> cpuSourceAvailable, vector<double> cpuMHz, vect
         root["cpu info"].append(cpu);
     }
 
+    for(int i = 0; i < dockerIDInfo.size(); ++i){
+        Json::Value docker;
+
+        docker["id"] = dockerIDInfo[i];
+        docker["cpu"] = dockerCpuInfo[i];
+        docker["memory usage"] = dockerMemoryUsageInfo[i];
+        docker["memory limit"] = dockerMemoryLimitInfo[i];
+        docker["memory"] = dockerMemoryInfo[i];
+//        docker["network input"] = dockerNetworkInputInfo[i];
+//        docker["network output"] = dockerNetworkOutputInfo[i];
+
+        root["docker info"].append(docker);
+    }
+
     //memory info to json
     Json::Value memory;
 
-    memory["Total"] = memoryTotalInfo[0];
-    memory["Available"] = memoryAvailableInfo[0];
-    memory["Used"] = 1 - (memoryAvailableInfo[0] / memoryTotalInfo[0]);
+    memory["total"] = memoryTotalInfo[0];
+    memory["available"] = memoryAvailableInfo[0];
+    memory["used"] = 1 - (memoryAvailableInfo[0] / memoryTotalInfo[0]);
 
     root["memory info"].append(memory);
 
@@ -86,9 +104,9 @@ void data_to_json(vector<double> cpuSourceAvailable, vector<double> cpuMHz, vect
 
     Json::Value disk;
 
-    disk["Total"] = diskTotal;
-    disk["Available"] = diskAvailable;
-    disk["Used"] = 1 - (diskAvailable / diskTotal);
+    disk["total"] = diskTotal;
+    disk["available"] = diskAvailable;
+    disk["used"] = 1 - (diskAvailable / diskTotal);
 
     root["disk info"].append(disk);
 
@@ -102,6 +120,11 @@ void data_to_json(vector<double> cpuSourceAvailable, vector<double> cpuMHz, vect
 
         root["network info"].append(network);
     }
+
+    Json::Value macAddress;
+
+    macAddress["id"] = macAddressId[0];
+    root["mac address info"].append(macAddress);
 
     Json::StyledWriter writer;
     ofstream os;
@@ -137,6 +160,57 @@ void exec_command(char* command, vector<double>& store){
     pclose(fp);
 }
 
+void string_exec_command(char* command, vector<string>& store){
+    FILE *fp = NULL;
+    fp = popen(command, "r");
+
+    char buf[1000];
+
+    if(!fp) {
+        perror("popen");
+        exit(EXIT_FAILURE);
+        return;
+    }
+
+    while(memset(buf, 0, sizeof(buf)), fgets(buf, sizeof(buf) - 1, fp) != 0 ) {
+        string s = buf;
+        store.push_back(s);
+    }
+
+    pclose(fp);
+}
+
+vector<string> split(const string& str, const string& delim) {
+    vector<string> res;
+    if("" == str)
+        return res;
+    char * strs = new char[str.length() + 1];
+    strcpy(strs, str.c_str());
+
+    char * d = new char[delim.length() + 1];
+    strcpy(d, delim.c_str());
+
+    char *p = strtok(strs, d);
+    while(p) {
+        string s = p;
+        res.push_back(s);
+        p = strtok(NULL, d);
+    }
+
+    return res;
+}
+
+double stringToHashCode(string s){
+    double seed = 31;
+    double h = 0;
+    if (h == 0 && s.length() > 0) {
+        for (int i = 0; i < s.length(); i++) {
+            h = seed * h + s[i];
+        }
+    }
+    return h;
+}
+
 void linux_command(){
     vector<double> cpuSourceAvailable;
     vector<double> cpuMHz;
@@ -147,6 +221,16 @@ void linux_command(){
     vector<double> diskAvailableInfo;
     vector<double> ethFirstInfo;
     vector<double> ethSecondInfo;
+    vector<string> dockerIDInfo;
+    vector<double> dockerCpuInfo;
+    vector<double> dockerMemoryUsageInfo;
+    vector<double> dockerMemoryLimitInfo;
+    vector<double> dockerMemoryInfo;
+//    vector<double> dockerNetworkInputInfo;
+//    vector<double> dockerNetworkOutputInfo;
+    vector<string> dockerInfo;
+    vector<string> macAddress;
+    vector<double> macAddressId;
 
     //cpu resource info
     cout << endl << "cpu source available :" << endl;
@@ -185,11 +269,74 @@ void linux_command(){
     cout << endl << "second network bandwidth info (Bytes):" << endl;
     exec_command("ifconfig | grep \"X packets\" | awk '{print $5}'", ethSecondInfo);
 
-    cout << endl << "upload rate : " << (ethSecondInfo[0] - ethFirstInfo[0]) / 1024.00 << " KB/s" << endl;
-    cout << endl << "download rate : " << (ethSecondInfo[1] - ethFirstInfo[1]) / 1024.00 << " KB/s" << endl;
+//    cout << endl << "upload rate : " << (ethSecondInfo[0] - ethFirstInfo[0]) / 1024.00 << " KB/s" << endl;
+//    cout << endl << "download rate : " << (ethSecondInfo[1] - ethFirstInfo[1]) / 1024.00 << " KB/s" << endl;
 
+    //docker info
+    cout << endl << "docker id info :" << endl;
+    string_exec_command("docker stats --no-stream | grep -v CPU", dockerInfo);
 
-    data_to_json(cpuSourceAvailable, cpuMHz, cpuCores, memoryTotalInfo, memoryAvailableInfo, diskTotalInfo, diskAvailableInfo, ethFirstInfo, ethSecondInfo);
+    for(int i = 0; i < dockerInfo.size(); ++i){
+        vector<string> s = split(dockerInfo[i], " ");
+
+        dockerIDInfo.push_back(s[0]);
+        dockerCpuInfo.push_back(atof(s[2].c_str()));
+        dockerMemoryUsageInfo.push_back(atof(s[3].c_str()));
+        if(s[3][s[3].length() - 3] == 'M')
+            dockerMemoryUsageInfo[dockerMemoryUsageInfo.size() - 1] *= 1024;
+        else if(s[3][s[3].length() - 3] == 'G')
+            dockerMemoryUsageInfo[dockerMemoryUsageInfo.size() - 1] *= 1024 * 1024;
+
+        dockerMemoryLimitInfo.push_back(atof(s[5].c_str()));
+        if(s[5][s[5].length() - 3] == 'M')
+            dockerMemoryLimitInfo[dockerMemoryLimitInfo.size() - 1] *= 1024;
+        else if(s[5][s[5].length() - 3] == 'G')
+            dockerMemoryLimitInfo[dockerMemoryLimitInfo.size() - 1] *= 1024 * 1024;
+
+        dockerMemoryInfo.push_back(atof(s[6].c_str()));
+//        dockerNetworkInputInfo.push_back(atof(s[7].c_str()));
+//        dockerNetworkOutputInfo.push_back(atof(s[9].c_str()));
+    }
+
+    for(int i = 0; i < dockerIDInfo.size(); ++i){
+        cout << dockerIDInfo[i] << " ";
+    }
+    cout << endl;
+
+    for(int i = 0; i < dockerCpuInfo.size(); ++i){
+        cout << dockerCpuInfo[i] << " ";
+    }
+    cout << endl;
+
+    for(int i = 0; i < dockerMemoryUsageInfo.size(); ++i){
+        cout << dockerMemoryUsageInfo[i] << " ";
+    }
+    cout << endl;
+
+    for(int i = 0; i < dockerMemoryLimitInfo.size(); ++i){
+        cout << dockerMemoryLimitInfo[i] << " ";
+    }
+    cout << endl;
+//
+//    for(int i = 0; i < dockerNetworkInputInfo.size(); ++i){
+//        cout << dockerNetworkInputInfo[i] << " ";
+//    }
+//    cout << endl;
+//
+//    for(int i = 0; i < dockerNetworkOutputInfo.size(); ++i){
+//        cout << dockerNetworkOutputInfo[i] << " ";
+//    }
+//    cout << endl;
+
+    //mac address info
+    cout << endl << "mac address info :" << endl;
+    string_exec_command("cat /sys/class/net/eth0/address", macAddress);
+
+    double macId = stringToHashCode(macAddress[0]);
+    macAddressId.push_back(macId);
+
+    data_to_json(cpuSourceAvailable, cpuMHz, cpuCores, memoryTotalInfo, memoryAvailableInfo, diskTotalInfo, diskAvailableInfo, ethFirstInfo, ethSecondInfo,
+    dockerIDInfo, dockerCpuInfo, dockerMemoryUsageInfo, dockerMemoryLimitInfo, dockerMemoryInfo, macAddressId);
 }
 
 #endif //CLIENT_LINUXCOMMAND_H

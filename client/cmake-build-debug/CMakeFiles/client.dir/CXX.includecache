@@ -6,6 +6,36 @@
 
 #IncludeRegexTransform: 
 
+/Users/yanhao/CLionProjects/client/HttpRequest.h
+string.h
+-
+stdlib.h
+-
+stdio.h
+-
+unistd.h
+-
+fcntl.h
+-
+errno.h
+-
+netdb.h
+-
+stdarg.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+arpa/inet.h
+-
+sys/types.h
+-
+sys/socket.h
+-
+iostream
+-
+
 /Users/yanhao/CLionProjects/client/jsonToMysql.h
 iostream
 -
@@ -113,6 +143,8 @@ json_include/json.h
 /Users/yanhao/CLionProjects/client/json_include/json.h
 fstream
 -
+string
+-
 
 /Users/yanhao/CLionProjects/client/main.cpp
 iostream
@@ -125,6 +157,8 @@ linuxCommand.h
 /Users/yanhao/CLionProjects/client/linuxCommand.h
 jsonToMysql.h
 /Users/yanhao/CLionProjects/client/jsonToMysql.h
+HttpRequest.h
+/Users/yanhao/CLionProjects/client/HttpRequest.h
 
 /Users/yanhao/CLionProjects/client/mysql_include/my_alloc.h
 

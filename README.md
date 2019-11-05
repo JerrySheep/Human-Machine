@@ -7,7 +7,7 @@ A demo for get linux resource information and transfer the data to another linux
 ### Get linux resource infomation
 
 - The infomation of the linux is gotten by linux command.<br>
-- The infomation includes **`cpu`**, **`disk`**, **`memory`** and **`network`**.<br>
+- The infomation includes **`cpu`**, **`disk`**, **`memory`**, **`network`** and **`docker`**.<br>
 - The code is stored in **`linuxCommand.h`**.<br>
 
 ### Store the infomation in a json file
