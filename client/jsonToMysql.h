@@ -80,6 +80,7 @@ void jsonToMysql(){
 
         Json::Value macAddress = value["mac address info"];
         memoryInfo.push_back(macAddress[0]["id"].asDouble());
+	
     }
 
     /*outputInfo(cpuSourceAvailable);

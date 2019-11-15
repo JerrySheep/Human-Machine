@@ -183,20 +183,22 @@ char* HttpRequest::HttpHeadCreate(const char* strMethod, const char* strUrl, con
     char* strHttpHead = (char*)malloc(BUFSIZE);
     memset(strHttpHead, 0, BUFSIZE);
 
-    strcat(strHttpHead, strMethod);
-    strcat(strHttpHead, " /");
-    strcat(strHttpHead, strParam);
-    free(strParam);
-    strcat(strHttpHead, " HTTP/1.1\r\n");
-    strcat(strHttpHead, "Accept: */*\r\n");
-    strcat(strHttpHead, "Accept-Language: en-us,en;q=0.5\r\n");
-    //strcat(strHttpHead, "Accept-Charset: GB2312,utf-8;q=0.7,*;q=0.7\r\n");
-    strcat(strHttpHead, "User-Agent: Mozilla/4.0\r\n");
-    strcat(strHttpHead, "Host: ");
-    strcat(strHttpHead, strHost);
-    strcat(strHttpHead, "\r\n");
-    strcat(strHttpHead, "Cache-Control: no-cache\r\n");
-    strcat(strHttpHead, "Connection: Keep-Alive\r\n");
+        strcat(strHttpHead, strMethod);
+        strcat(strHttpHead, " /");
+        strcat(strHttpHead, strParam);
+        free(strParam);
+        strcat(strHttpHead, " HTTP/1.1\r\n");
+        strcat(strHttpHead, "Accept: */*\r\n");
+        strcat(strHttpHead, "Accept-Language: en-us,en;q=0.5\r\n");
+        //strcat(strHttpHead, "Accept-Charset: GB2312,utf-8;q=0.7,*;q=0.7\r\n");
+        strcat(strHttpHead, "User-Agent: Mozilla/4.0\r\n");
+        strcat(strHttpHead, "Host: ");
+        strcat(strHttpHead, strHost);
+        strcat(strHttpHead, "\r\n");
+        strcat(strHttpHead, "Cache-Control: no-cache\r\n");
+        strcat(strHttpHead, "Connection: Keep-Alive\r\n");
+
+
     if(0 == strcmp(strMethod, "POST")) {
         char len[8] = {0};
         unsigned uLen = strlen(strData);
